@@ -1,56 +1,65 @@
 # Week 10 — Image Processing (FreshTrack CV Pipeline)
 
-**Fusemachines AI Fellowship 2026** · Instructor: Rakshya Lama Moktan · 100 pts · Due Jul 16, 20:45 NPT
+This repository contains a completed computer vision assignment for the Fusemachines AI Fellowship. The work focuses on classical image-processing techniques using a real classroom image set and a Fruits-360 subset, with the full workflow implemented in a notebook.
 
-Classical computer vision pipeline covering color-space segmentation, morphology, edge detection, and feature detection — built and validated against real classroom images, not synthetic placeholders.
+## What this project covers
 
-## Stack
+- Color-space inspection and fruit segmentation using HSV masks
+- Morphological operations and image denoising
+- Edge detection with a custom Canny pipeline and OpenCV comparison
+- Feature detection with Harris corners, Hough circles, and a full fruit-detection pipeline
+
+## Tech stack
 
 Python · OpenCV · NumPy · Matplotlib · kagglehub
 
-## Dataset
+## Files in this workspace
 
-- **Fruits-360** (`moltean/fruits`, 100×100 variant, via `kagglehub`) — auto-mapped to 6 required classes: `red_apple`, `green_apple`, `banana`, `strawberry`, `orange`, `lime`
-- **Instructor-provided** (Classroom upload): `morphology.png` (cursive "j"), `chessboard.png`, `mixed_fruit_bowl.jpeg`
+- [assignment/W10_Image_Processing_Assignment.ipynb](assignment/W10_Image_Processing_Assignment.ipynb) — the main assignment notebook
+- [W10_Image_Processing_Assignment_executed.ipynb](W10_Image_Processing_Assignment_executed.ipynb) — the executed version with outputs
+- [docs/W10 Image Processing.pdf](docs/W10%20Image%20Processing.pdf) — reference material for the assignment
+- [data](data) — workspace folder for supporting data assets
+- [LICENSE](LICENSE) — project license
 
-## Structure
+## Dataset and inputs
 
-**Setup** — Kaggle auth (Colab Secrets), dataset download, class→file resolution, instructor image upload, sanity check (9 images staged in `/content/assignment_images/`).
+The notebook uses:
+
+- Fruits-360 via kagglehub, mapped to six required classes: red_apple, green_apple, banana, strawberry, orange, and lime
+- Instructor-provided images: morphology.png, chessboard.png, and mixed_fruit_bowl.jpeg
+
+## Workflow summary
 
 ### Part A — Color Space & Fruit Segmentation
-
-- Q1–2: BGR/RGB and HSV channel inspection
-- Q3–10: Per-fruit `inRange()` masks
-- Multi-class segmentation on `mixed_fruit_bowl.jpeg`
-- Two HSV range sets, kept separate since they come from different image sources: `HSV_RANGES` (Fruits-360 studio thumbnails, 6 classes, estimated) vs `BOWL_HSV_RANGES` (real-sampled from the bowl photo — apple H≈171, banana H≈25, orange H≈16; orange/banana separated mainly by saturation, not hue)
+- Explores BGR vs RGB channel ordering
+- Builds per-fruit HSV masks with inRange()
+- Performs multi-class segmentation on the bowl image
 
 ### Part B — Morphology & Denoising
-
-- 5 ops (erosion, dilation, opening, closing, gradient) on the real `morphology.png`
-- Salt-and-pepper / Gaussian noise injection + Gaussian, median, bilateral denoising
+- Applies erosion, dilation, opening, closing, and gradient operations to morphology.png
+- Adds and removes noise using Gaussian, median, and bilateral filters
 
 ### Part C — Edge Detection
-
-- Q11: From-scratch Canny (Sobel → NMS → double-threshold → hysteresis) vs `cv2.Canny()`, compared via pixel-agreement metric. Pure-Python NMS/hysteresis is O(H×W) with nested loops, so it runs on a resized 150×150 copy for this comparison step only.
+- Implements Canny edge detection from scratch using Sobel gradients, non-max suppression, double thresholding, and hysteresis
+- Compares the custom result with cv2.Canny()
 
 ### Part D — Feature Detection
+- Detects corners with Harris corner response
+- Uses Hough circles on the fruit bowl image
+- Builds a complete single-fruit detection pipeline using masking, morphology, contours, and bounding boxes
 
-- Q12: Harris corners on `chessboard.png`, 5-way threshold sweep
-- Q13: Hough circles on the bowl photo, tuned `param2=100`
-- Q14: Full single-fruit detection pipeline (HSV mask → morphology → contour → bbox), using `BOWL_HSV_RANGES`
+## Notes from the completed run
 
-## Notes from the real-data pass
+- The notebook handles the real dataset naming mismatch by normalizing mixed_fruit_bowl.jpeg to mixed_bowl.jpg during upload.
+- Hough circle parameters were tuned for real images instead of synthetic defaults to reduce false positives.
+- The fruit-detection pipeline was improved to separate touching apples using connected-component analysis after initial segmentation.
 
-- `morphology.png` is a cursive letter stroke, not a noisy blob — write-up reflects actual behavior (erosion nearly erases the thin stroke; opening/closing barely change it, since there are no specks/holes to remove).
-- Filename mismatch handled: notebook originally expected `mixed_bowl.jpg`, classroom file is `mixed_fruit_bowl.jpeg` — upload cell normalizes this.
-- Hough params retuned from synthetic defaults, which gave 128 false positives on the real photo, down to `param2=100`.
-- Q14 caught a real segmentation limitation: touching apples in the bowl initially produced one bounding box spanning all 5 (w=1060, h=466). Fixed with distance-transform + connected-components separation, verified against a single apple-sized bbox (w=286, h=315).
-- `ACTUAL_FRUIT_COUNT` is left as `None` — color-mask contour counting can't reliably separate touching same-color objects, so this is filled in by manual count rather than an unverified guess.
+## How to run
 
-## Setup
-
-1. Add `KAGGLE_USERNAME` / `KAGGLE_KEY` via Colab Secrets (🔑 icon), or use the commented file-upload fallback in the setup cell.
-2. Run the notebook top to bottom on a fresh runtime.
+1. Open the assignment notebook in Colab or Jupyter.
+2. Add Kaggle credentials using Colab Secrets or upload kaggle.json as shown in the notebook.
+3. Upload the instructor images morphology.png, chessboard.png, and mixed_fruit_bowl.jpeg.
+4. Run the notebook from top to bottom to generate the outputs.
 
 ## License
 
