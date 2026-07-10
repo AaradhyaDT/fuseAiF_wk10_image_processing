@@ -54,4 +54,4 @@ Python · OpenCV · NumPy · Matplotlib · kagglehub
 
 ## License
 
-See `LICENSE`(LICENSE).
+See [LICENSE](LICENSE).
