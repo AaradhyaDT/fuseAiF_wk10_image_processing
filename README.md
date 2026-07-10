@@ -58,8 +58,9 @@ The notebook uses:
 
 1. Open the assignment notebook in Colab or Jupyter.
 2. Add Kaggle credentials using Colab Secrets or upload kaggle.json as shown in the notebook.
-3. Upload the instructor images morphology.png, chessboard.png, and mixed_fruit_bowl.jpeg.
-4. Run the notebook from top to bottom to generate the outputs.
+3. Note that the notebook uses the Kaggle legacy API, so the Kaggle CLI/API setup must be compatible with that workflow.
+4. Upload the instructor images morphology.png, chessboard.png, and mixed_fruit_bowl.jpeg.
+5. Run the notebook from top to bottom to generate the outputs.
 
 ## License
 
